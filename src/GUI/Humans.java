@@ -1,12 +1,21 @@
 package GUI;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Humans {
 
+    static ResultSet result = null;
+    static Connection con;
+    static PreparedStatement state;
+
+
     String firstName, lastName;
     int age;
-    char gender;
+    String gender;
     String ethnicity, religion;
     float height, weight;
     boolean elementary, highSchool, master, employed;
@@ -17,7 +26,7 @@ public class Humans {
     public Humans() {
     }
 
-    public Humans(String fName, String lName, int age, char gender, String ethnicity, String religion, float height, float weight,/* boolean elementary, boolean highSchool, boolean master, boolean employed, double salary, */boolean alive, boolean healthy) {
+    public Humans(String fName, String lName, int age, String gender, String ethnicity, String religion, float height, float weight, boolean elementary, boolean highSchool, boolean master, boolean employed, double salary, boolean alive, boolean healthy) {
         super();
         this.setFirstName(fName);
         this.setLastName(lName);
@@ -27,11 +36,11 @@ public class Humans {
         this.setReligion(religion);
         this.setHeight(height);
         this.setWeight(weight);
-        /*this.setElementary(elementary);
+        this.setElementary(elementary);
         this.setHighSchool(highSchool);
         this.setMaster(master);
         this.setEmployed(employed);
-        this.setSalary(salary);*/
+        this.setSalary(salary);
         this.setAlive(alive);
         this.setHealthy(healthy);
     }
@@ -59,11 +68,11 @@ public class Humans {
     public void setAge(int age) {
         this.gender = gender;
     }
-    public char getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(char gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -162,13 +171,13 @@ public class Humans {
         private static String[] lNames = {"Wolfs", "Kingston", "Dawson", "Martin", "Wick", "Milkov"};
         private static String[] ethnicities = {"Caucasian", "African", "Asian", "Indian"};
         private static String[] religions = {"Atheist", "Catholic", "Orthodox", "Judaic", "Buddhist", "Hindus"};
-        private static char[] genders = {'m', 'f'};
+        private static String[] genders = {"Male", "Female"};
 
         public static Humans generate() {
             int arrayIndex = ThreadLocalRandom.current().nextInt(0, 1);
-            char gender = genders[arrayIndex];
+            String gender = genders[arrayIndex];
             String fName;
-            if (gender == 'm') {
+            if (gender.equalsIgnoreCase("Male")) {
                 arrayIndex = ThreadLocalRandom.current().nextInt(0, mFNames.length);
                 fName = mFNames[arrayIndex];
             }
@@ -189,6 +198,40 @@ public class Humans {
             String ethnicity = ethnicities[arrayIndex];
             arrayIndex = ThreadLocalRandom.current().nextInt(0, religions.length);
             String religion = religions[arrayIndex];
+
+            boolean elementary = ThreadLocalRandom.current().nextBoolean();
+            boolean highschool;
+            if(elementary == true) {
+                highschool = true;
+            } else { highschool = false; }
+            boolean master;
+            if(highschool == true) {
+                master = true;
+            } else { master = false; }
+
+            boolean employed = ThreadLocalRandom.current().nextBoolean();
+            double salary = 0.0;
+            int b;
+            /*if(employed == true) {
+                try {
+                    con = DBConnect.getConnection();
+
+                    String sql = "SELECT MinimalWage FROM economy WHERE id=4;";
+
+                    state = con.prepareStatement(sql);
+                    result = state.executeQuery();
+
+                    while(result.next()) {
+                        salary = result.getDouble("MinimalWage");
+                        b =ThreadLocalRandom.current().nextInt(0, 440);
+                        salary = salary + (float) b;
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }*/
+            salary = 550.0;
+
             boolean alive = ThreadLocalRandom.current().nextBoolean();
             boolean health;
             if(alive == true){
@@ -197,7 +240,7 @@ public class Humans {
             else {
                 health = false;
             }
-            return new Humans(fName, lName, age, gender, ethnicity, religion, height, weight, alive, health);
+            return new Humans(fName, lName, age, gender, ethnicity, religion, height, weight, elementary, highschool, master, employed, salary, alive, health);
         }
     }
 }

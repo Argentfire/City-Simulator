@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class Base extends JFrame implements ActionListener {
 
@@ -21,6 +22,7 @@ public class Base extends JFrame implements ActionListener {
 
     JButton button1 = new JButton("City Hall");
     JButton button2 = new JButton("Add City Hall");
+
 
     JButton addHuman = new JButton("Add Human");
     JButton addHumans = new JButton("Add Humans");
@@ -38,6 +40,8 @@ public class Base extends JFrame implements ActionListener {
     JTable table = new JTable();
     JScrollPane scrollPane = new JScrollPane(table);
     JScrollBar scrollBar = new JScrollBar();
+
+    JButton testButton = new JButton("Test Button");
 
     public Base(){
 
@@ -134,6 +138,67 @@ public class Base extends JFrame implements ActionListener {
 
         botPanel.add(addHuman);
         botPanel.add(addHumans);
+        botPanel.add(testButton);
+
+        addHuman.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Humans human = Humans.HumanGenerator.generate();
+                try {
+                    con = DBConnect.getConnection();
+
+                    String sql = "INSERT INTO humans VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);" + "";
+
+                    state = con.prepareStatement(sql);
+                    state.setString(1, human.getFirstName());
+                    state.setString(2, human.getLastName());
+                    state.setInt(3, human.getAge());
+                    state.setString(4, human.getEthnicity());
+                    state.setString(5, human.getReligion());
+                    state.setFloat(6, human.getHeight());
+                    state.setFloat(7, human.getWeight());
+                    state.setBoolean(8, human.isElementary());
+                    state.setBoolean(9, human.isHighSchool());
+                    state.setBoolean(10, human.isMaster());
+                    state.setBoolean(11, human.isEmployed());
+                    state.setDouble(12, human.getSalary());
+                    state.setBoolean(13, human.isAlive());
+                    state.setBoolean(14, human.isHealthy());
+                    state.setString(15, human.getGender());
+                    state.execute();
+
+
+                    state = con.prepareStatement("UPDATE population SET alive=?, deceased=?, healthy=?, sick=?, total=? WHERE id=1;");
+
+                    state.setInt(1, +1);
+                    state.setInt(2, +1);
+                    state.setInt(3, +1);
+                    state.setInt(4, +1);
+                    state.setInt(5, +1);
+
+                    refreshTable(table, "population");
+
+                    state.execute();
+                } catch(SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        addHumans.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                make();
+                testHumans(people);
+            }
+        });
+
+        testButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                testMethod();
+            }
+        });
 
 
         container.add(topPanel, BorderLayout.NORTH);
@@ -147,6 +212,30 @@ public class Base extends JFrame implements ActionListener {
         for(int i = 0; i < people.length; i++) {
             Humans person = Humans.HumanGenerator.generate();
             people[i] = person;
+        }
+    }
+
+    void testHumans(Humans[] ppl) {
+        for(int i = 0; i < generalPopulation; i++) {
+
+        }
+
+        for (Humans human : ppl
+             ) {
+            System.out.println(human.getFirstName() + " " + human.getLastName() + " " + human.getAge() + " " + human.getEthnicity() + " " + human.getReligion() + " " + human.getHeight() + " " + human.getWeight() + " " + human.isElementary() + " " + human.isHighSchool() + " " + human.isMaster() + " " + human.isEmployed() + " " + human.getSalary() + " " + human.isAlive() + " " + human.isHealthy() + " " + human.getGender());
+        }
+        System.out.println();
+    }
+
+    void testMethod() {
+        int a = 0;
+        for( ; ; ) {
+            try {
+                System.out.println("Test");
+                Thread.sleep(2000);
+            }catch(Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
