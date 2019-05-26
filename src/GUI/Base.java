@@ -167,14 +167,31 @@ public class Base extends JFrame implements ActionListener {
                     state.setString(15, human.getGender());
                     state.execute();
 
+                    state = con.prepareStatement("SELECT * FROM population WHERE id=?");
+                    state.setInt(0, 1);
+                    state.executeQuery();
+
+                    int alive = 0;
+                    int deceased = 0;
+                    int healthy = 0;
+                    int sick = 0;
+                    int total = 0;
+
+                    while(result.next()) {
+                        alive = result.getInt("alive");
+                        deceased = result.getInt("deceased");
+                        healthy = result.getInt("healthy");
+                        sick = result.getInt("sick");
+                        total = result.getInt("total");
+                    }
 
                     state = con.prepareStatement("UPDATE population SET alive=?, deceased=?, healthy=?, sick=?, total=? WHERE id=1;");
 
-                    state.setInt(1, +1);
-                    state.setInt(2, +1);
-                    state.setInt(3, +1);
-                    state.setInt(4, +1);
-                    state.setInt(5, +1);
+                    state.setInt(0, alive++);
+                    state.setInt(1, deceased++);
+                    state.setInt(2, healthy++);
+                    state.setInt(3, sick++);
+                    state.setInt(4, total++);
 
                     refreshTable(table, "population");
 
