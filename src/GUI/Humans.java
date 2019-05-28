@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Humans {
@@ -27,7 +28,7 @@ public class Humans {
     }
 
     public Humans(String fName, String lName, int age, String gender, String ethnicity, String religion, float height, float weight, boolean elementary, boolean highSchool, boolean master, boolean employed, double salary, boolean alive, boolean healthy) {
-        super();
+        //super();
         this.setFirstName(fName);
         this.setLastName(lName);
         this.setAge(age);
@@ -66,7 +67,7 @@ public class Humans {
     }
 
     public void setAge(int age) {
-        this.gender = gender;
+        this.age = age;
     }
     public String getGender() {
         return gender;
@@ -166,6 +167,7 @@ public class Humans {
 
    // Humans(firstname, lastname, age, gender, ethnicity, religion, height, weight, alive, health)
     public static class HumanGenerator {
+        static int arrayIndex;
         private static String[] mFNames = {"Aaron", "Andrew", "Adolf", "Alan", "Benedict", "Barry", "Bill", "Brad", "Curt", "Corey", "Clint", "Donald", "Drew", "Dick", "Darius", "Joseph"};
         private static String[] fFNames = {"Alex", "Anelia", "Ada", "Aria", "Bella", "Stella", "Zoe", "Natalie", "Skylar", "Claire", "Violet", "Samantha", "Emilia", "Naomi", "Karolinka"};
         private static String[] lNames = {"Wolfs", "Kingston", "Dawson", "Martin", "Wick", "Milkov"};
@@ -174,10 +176,11 @@ public class Humans {
         private static String[] genders = {"Male", "Female"};
 
         public static Humans generate() {
-            int arrayIndex = ThreadLocalRandom.current().nextInt(0, 1);
+            Random c = new Random();
+            arrayIndex = ThreadLocalRandom.current().nextInt(0, genders.length);
             String gender = genders[arrayIndex];
             String fName;
-            if (gender.equalsIgnoreCase("Male")) {
+            if (gender.equalsIgnoreCase("male")) {
                 arrayIndex = ThreadLocalRandom.current().nextInt(0, mFNames.length);
                 fName = mFNames[arrayIndex];
             }
@@ -187,7 +190,7 @@ public class Humans {
             }
             arrayIndex = ThreadLocalRandom.current().nextInt(0, lNames.length);
             String lName = lNames[arrayIndex];
-            int age = ThreadLocalRandom.current().nextInt(18, 85);
+            int age = ThreadLocalRandom.current().nextInt(1, 100);
             int h = ThreadLocalRandom.current().nextInt(150, 200);
             int h2 = ThreadLocalRandom.current().nextInt(0, 9);
             float height = (float) h + (float)(h2/10);
@@ -199,7 +202,12 @@ public class Humans {
             arrayIndex = ThreadLocalRandom.current().nextInt(0, religions.length);
             String religion = religions[arrayIndex];
 
-            boolean elementary = ThreadLocalRandom.current().nextBoolean();
+            boolean elementary;
+            if(age < 14) {
+                elementary = false;
+            } else {
+                elementary = ThreadLocalRandom.current().nextBoolean();
+            }
             boolean highschool;
             if(elementary == true) {
                 highschool = true;
@@ -230,16 +238,28 @@ public class Humans {
                     ex.printStackTrace();
                 }
             }*/
-            salary = 550.0;
-
-            boolean alive = ThreadLocalRandom.current().nextBoolean();
+            boolean alive;
             boolean health;
+            if(age > 85) {
+                alive = false;
+            }
+            else {
+                alive = ThreadLocalRandom.current().nextBoolean();
+            }
             if(alive == true){
-                health = true;
+                health = ThreadLocalRandom.current().nextBoolean();
             }
             else {
                 health = false;
             }
+            if(alive == true) {
+                if (employed == true) {
+                    salary = 550.0;
+                } else {
+                    salary = 0;
+                }
+            }
+            else { salary = 0; }
             return new Humans(fName, lName, age, gender, ethnicity, religion, height, weight, elementary, highschool, master, employed, salary, alive, health);
         }
     }

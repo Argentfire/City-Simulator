@@ -11,7 +11,7 @@ public class DBConnect {
 
     /*public DBConnect() {
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/csdb", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sql7292726", "root", "");
             st = con.createStatement();
 
 
@@ -22,7 +22,7 @@ public class DBConnect {
 
     public static Connection getConnection() {
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/csdb", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sql7292726", "root", "");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -31,7 +31,7 @@ public class DBConnect {
 
     public DBConnect() {
         try {
-            con = DriverManager.getConnection("jdbc:mysql:sql7.freemysqlhosting.net/sql7292726", "sql7292726", "WNGLAkyC9V");
+            con = DriverManager.getConnection("jdbc:mysql://sql7.freemysqlhosting.net/sql7292726", "sql7292726", "WNGLAkyC9V");
             st = con.createStatement();
 
 
@@ -44,7 +44,7 @@ public class DBConnect {
         try {
             con = DriverManager.getConnection("jdbc:mysql://sql7.freemysqlhosting.net/sql7292726", "sql7292726", "WNGLAkyC9V");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("Error " + ex);
         }
         return con;
     }

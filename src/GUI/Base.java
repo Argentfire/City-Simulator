@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 
 public class Base extends JFrame implements ActionListener {
@@ -41,7 +43,12 @@ public class Base extends JFrame implements ActionListener {
     JScrollPane scrollPane = new JScrollPane(table);
     JScrollBar scrollBar = new JScrollBar();
 
+    JTable table2 = new JTable();
+    JScrollPane scrollPane2 = new JScrollPane(table2);
+
     JButton testButton = new JButton("Test Button");
+
+    ArrayList<Humans> list = new ArrayList<>();
 
     public Base(){
 
@@ -90,9 +97,11 @@ public class Base extends JFrame implements ActionListener {
         topPanel.add(button1);
         topPanel.add(button2);
 
-        //midPanel.setLayout(new GridLayout(2, 1));
+        midPanel.setLayout(new GridLayout(2, 1));
         midPanel.add(scrollPane);
+        midPanel.add(scrollPane2);
         scrollPane.setPreferredSize(new Dimension(400, 100));
+        scrollPane2.setPreferredSize(new Dimension(400, 100));
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -135,10 +144,12 @@ public class Base extends JFrame implements ActionListener {
             }
         });
         refreshTable(table, "population");
+        refreshTable(table2, "humans");
 
         botPanel.add(addHuman);
         botPanel.add(addHumans);
         botPanel.add(testButton);
+
 
         addHuman.addActionListener(new ActionListener() {
             @Override
@@ -167,35 +178,46 @@ public class Base extends JFrame implements ActionListener {
                     state.setString(15, human.getGender());
                     state.execute();
 
-                    state = con.prepareStatement("SELECT * FROM population WHERE id=?");
-                    state.setInt(0, 1);
-                    state.executeQuery();
-
+                    int id = 1;
                     int alive = 0;
                     int deceased = 0;
                     int healthy = 0;
                     int sick = 0;
                     int total = 0;
 
-                    while(result.next()) {
-                        alive = result.getInt("alive");
-                        deceased = result.getInt("deceased");
-                        healthy = result.getInt("healthy");
-                        sick = result.getInt("sick");
-                        total = result.getInt("total");
+                    if(human.isAlive() == true) {
+                        alive++;
+                        if(human.isHealthy() == true) {
+                            healthy++;
+                        }
+                        else {
+                            sick++;
+                        }
+                    }
+                    else {
+                        deceased++;
                     }
 
-                    state = con.prepareStatement("UPDATE population SET alive=?, deceased=?, healthy=?, sick=?, total=? WHERE id=1;");
+                    state = con.prepareStatement("SELECT total FROM population WHERE id=?;");
+                    state.setInt(1,1);
+                    state.executeQuery();
+                    while (result.next()) {
+                        total = result.getInt("total");
+                    }
+                    total++;
 
-                    state.setInt(0, alive++);
-                    state.setInt(1, deceased++);
-                    state.setInt(2, healthy++);
-                    state.setInt(3, sick++);
-                    state.setInt(4, total++);
+                    state = con.prepareStatement("UPDATE population SET alive=?, deceased=?, healthy=?, sick=?, total=? WHERE id=?;");
+
+                    state.setInt(1, alive);
+                    state.setInt(2, deceased);
+                    state.setInt(3, healthy);
+                    state.setInt(4, sick);
+                    state.setInt(5, total);
+                    state.setInt(6, id);
+                    state.execute();
 
                     refreshTable(table, "population");
-
-                    state.execute();
+                    refreshTable(table2, "humans");
                 } catch(SQLException ex) {
                     ex.printStackTrace();
                 }
@@ -205,15 +227,56 @@ public class Base extends JFrame implements ActionListener {
         addHumans.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                make();
-                testHumans(people);
+                //make();
+                testMethod(list);
+                testHumans(list);
             }
         });
 
         testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                testMethod();
+                //testMethod();
+
+                try {
+                    con = DBConnect.getConnection();
+
+                    int alive = 0;
+                    int deceased = 0;
+                    int healthy = 0;
+                    int sick = 0;
+                    int total = 0;
+                    state = con.prepareStatement("SELECT alive, healthy FROM humans");
+                    result = state.executeQuery();
+                    while(result.next()){
+                        if(result.getBoolean("alive") == true) {
+                            alive++;
+                        }
+                        else {
+                            deceased++;
+                        }
+                        if(result.getBoolean("healthy") == true) {
+                            healthy++;
+                        }
+                        else {
+                            sick++;
+                        }
+                        total++;
+                    }
+                    state = con.prepareStatement("UPDATE population SET alive=?, deceased=?, healthy=?, sick=?, total=? WHERE id=?");
+
+                    state.setInt(1, alive);
+                    state.setInt(2, deceased);
+                    state.setInt(3, healthy);
+                    state.setInt(4, sick);
+                    state.setInt(5, total);
+                    state.setInt(6, 1);
+                    state.execute();
+                } catch(SQLException ex) {
+                    ex.printStackTrace();
+                }
+                refreshTable(table, "population");
+                refreshTable(table2, "humans");
             }
         });
 
@@ -232,28 +295,25 @@ public class Base extends JFrame implements ActionListener {
         }
     }
 
-    void testHumans(Humans[] ppl) {
-        for(int i = 0; i < generalPopulation; i++) {
-
+    public static void testHumans(List<Humans> ppl) {
+        for (Humans person : ppl
+        ) {
+            System.out.println(person.getFirstName() + " " + person.getLastName() + " " + person.getAge() + " " + person.getEthnicity() + " " + person.getReligion() + " " + person.getHeight() + " " + person.getWeight() + " " + person.isElementary() + " " + person.isHighSchool() + " " + person.isMaster() + " " + person.isEmployed() + " " + person.getSalary() + " " + person.isAlive() + " " + person.isHealthy() + " " + person.getGender());
         }
-
-        for (Humans human : ppl
-             ) {
-            System.out.println(human.getFirstName() + " " + human.getLastName() + " " + human.getAge() + " " + human.getEthnicity() + " " + human.getReligion() + " " + human.getHeight() + " " + human.getWeight() + " " + human.isElementary() + " " + human.isHighSchool() + " " + human.isMaster() + " " + human.isEmployed() + " " + human.getSalary() + " " + human.isAlive() + " " + human.isHealthy() + " " + human.getGender());
-        }
-        System.out.println();
+    }
+    public static void testHumanz(Humans person) {
+        System.out.println(person.getFirstName() + " " + person.getLastName() + " " + person.getAge() + " " + person.getEthnicity() + " " + person.getReligion() + " " + person.getHeight() + " " + person.getWeight() + " " + person.isElementary() + " " + person.isHighSchool() + " " + person.isMaster() + " " + person.isEmployed() + " " + person.getSalary() + " " + person.isAlive() + " " + person.isHealthy() + " " + person.getGender());
     }
 
-    void testMethod() {
-        int a = 0;
-        for( ; ; ) {
-            try {
-                System.out.println("Test");
-                Thread.sleep(2000);
-            }catch(Exception ex) {
-                ex.printStackTrace();
-            }
+    public static void testMethod(List<Humans> a) {
+       // people = new Humans[generalPopulation];
+
+        for(int i = 0; i < generalPopulation; i++) {
+            Humans person = Humans.HumanGenerator.generate();
+            //people[i] = person;
+            a.add(person);
         }
+
     }
 
     void refreshTable(JTable table, String tableName) {
