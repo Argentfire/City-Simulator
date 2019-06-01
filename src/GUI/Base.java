@@ -185,6 +185,24 @@ public class Base extends JFrame implements ActionListener {
                     int sick = 0;
                     int total = 0;
 
+                    state = con.prepareStatement("SELECT alive, healthy FROM humans");
+                    result = state.executeQuery();
+                    while(result.next()){
+                        if(result.getBoolean("alive") == true) {
+                            alive++;
+                        }
+                        else {
+                            deceased++;
+                        }
+                        if(result.getBoolean("healthy") == true) {
+                            healthy++;
+                        }
+                        else {
+                            sick++;
+                        }
+                        total++;
+                    }
+
                     if(human.isAlive() == true) {
                         alive++;
                         if(human.isHealthy() == true) {
@@ -220,6 +238,22 @@ public class Base extends JFrame implements ActionListener {
                     refreshTable(table2, "humans");
                 } catch(SQLException ex) {
                     ex.printStackTrace();
+                } finally {
+                    if(result != null) {
+                        try {
+                            result.close();
+                        } catch(SQLException ex) { }
+                    }
+                    if(state != null) {
+                        try {
+                            state.close();
+                        } catch(SQLException ex) { }
+                    }
+                    if(con != null) {
+                        try {
+                            con.close();
+                        } catch(SQLException ex) { }
+                    }
                 }
             }
         });
@@ -227,9 +261,7 @@ public class Base extends JFrame implements ActionListener {
         addHumans.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //make();
-                testMethod(list);
-                testHumans(list);
+                make();
             }
         });
 
@@ -274,6 +306,22 @@ public class Base extends JFrame implements ActionListener {
                     state.execute();
                 } catch(SQLException ex) {
                     ex.printStackTrace();
+                } finally {
+                    if(result != null) {
+                        try {
+                            result.close();
+                        } catch(SQLException ex) { }
+                    }
+                    if(state != null) {
+                        try {
+                            state.close();
+                        } catch(SQLException ex) { }
+                    }
+                    if(con != null) {
+                        try {
+                            con.close();
+                        } catch(SQLException ex) { }
+                    }
                 }
                 refreshTable(table, "population");
                 refreshTable(table2, "humans");
@@ -293,27 +341,6 @@ public class Base extends JFrame implements ActionListener {
             Humans person = Humans.HumanGenerator.generate();
             people[i] = person;
         }
-    }
-
-    public static void testHumans(List<Humans> ppl) {
-        for (Humans person : ppl
-        ) {
-            System.out.println(person.getFirstName() + " " + person.getLastName() + " " + person.getAge() + " " + person.getEthnicity() + " " + person.getReligion() + " " + person.getHeight() + " " + person.getWeight() + " " + person.isElementary() + " " + person.isHighSchool() + " " + person.isMaster() + " " + person.isEmployed() + " " + person.getSalary() + " " + person.isAlive() + " " + person.isHealthy() + " " + person.getGender());
-        }
-    }
-    public static void testHumanz(Humans person) {
-        System.out.println(person.getFirstName() + " " + person.getLastName() + " " + person.getAge() + " " + person.getEthnicity() + " " + person.getReligion() + " " + person.getHeight() + " " + person.getWeight() + " " + person.isElementary() + " " + person.isHighSchool() + " " + person.isMaster() + " " + person.isEmployed() + " " + person.getSalary() + " " + person.isAlive() + " " + person.isHealthy() + " " + person.getGender());
-    }
-
-    public static void testMethod(List<Humans> a) {
-       // people = new Humans[generalPopulation];
-
-        for(int i = 0; i < generalPopulation; i++) {
-            Humans person = Humans.HumanGenerator.generate();
-            //people[i] = person;
-            a.add(person);
-        }
-
     }
 
     void refreshTable(JTable table, String tableName) {
@@ -346,18 +373,9 @@ public class Base extends JFrame implements ActionListener {
         if(e.getSource() == population) {
             setPopulation a = new setPopulation();
         }
-        else if(e.getSource() == addHuman) {
-            totalPopulation++;
-            /*try {
-                con = DBConnect.getConnection();
-
-                String sql = "UPDATE population SET total  "
-            }*/
-        }
-        else if(e.getSource() == addHumans) {
-
-        }
     }
+
+
     class setPopulation extends JFrame {
         JButton setButton = new JButton("Set");
         JPanel topPane = new JPanel();
@@ -472,6 +490,22 @@ public class Base extends JFrame implements ActionListener {
                                 state.execute();
                             } catch(SQLException ex) {
                                 ex.printStackTrace();
+                            } finally {
+                                if(result != null) {
+                                    try {
+                                        result.close();
+                                    } catch(SQLException ex) { }
+                                }
+                                if(state != null) {
+                                    try {
+                                        state.close();
+                                    } catch(SQLException ex) { }
+                                }
+                                if(con != null) {
+                                    try {
+                                        con.close();
+                                    } catch(SQLException ex) { }
+                                }
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();
